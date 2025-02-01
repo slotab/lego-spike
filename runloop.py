@@ -1,11 +1,9 @@
 import pygame
-import sys
-import inspect
 
 import asyncio
 
 from const import WHITE, GREEN, YELLOW, RED, WIDTH, HEIGHT
-from _hub import port
+from hub import port
 from robot import Robot
 
 # # Initialisation de Pygame
@@ -13,8 +11,11 @@ pygame.init()
 
 # # Crée une fenêtre pour la gestion des événements (facultatif)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Spikpounet")
+pygame.display.set_caption("Spike Simulator")
 robot = Robot(screen, 100, 100, "A", "B", "C")
+
+port[robot] = robot
+port[screen] = screen
 
 
 # Create a background with different colors

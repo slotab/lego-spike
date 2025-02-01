@@ -7,31 +7,14 @@ from hub import port
 
 
 class ColorSensor:
-    def __init__(self, port, screen, robot):
-        self.port = port
-        self.screen = screen
-        self.robot = robot
+    def __init__(self, port1):
+        self.port1 = port1
         self.simulated_light = 50  # Valeur par défaut
 
-    def detect_color(self):
-        # Calculate the sensor position
-        sensor_x = self.robot.x + math.cos(math.radians(self.robot.angle)) * (self.robot.radius + 5)
-        sensor_y = self.robot.y - math.sin(math.radians(self.robot.angle)) * (self.robot.radius + 5)
-
-        # Ensure the sensor is within bounds
-        if 0 <= sensor_x < WIDTH and 0 <= sensor_y < HEIGHT:
-            # Get the color of the pixel at the sensor position
-            self.sensor_color = self.screen.get_at((int(sensor_x), int(sensor_y)))[:3]
-        else:
-            self.sensor_color = BLACK  # Default to black if out of bounds
 
     def get_reflected_light(self):
-        """
-        Simule la lecture de la luminosité réfléchie.
-        Retourne une valeur entre 0 (noir) et 100 (blanc).
-        """
-        self.simulated_light = random.randint(30, 70)  # Simulation de variation
-        print(f"Capteur de couleur (port {self.port}) - Luminosité détectée: {self.simulated_light}")
+        self.simulated_light = port[self.port1]  # Simulation de variation
+        print(f"Capteur de couleur (port {self.port1}) - Luminosité détectée: {self.simulated_light}")
 
         return self.simulated_light
 

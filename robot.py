@@ -1,23 +1,9 @@
 import pygame
 import math
 
-from const import WIDTH, HEIGHT, WHITE, BLUE, RED, GREEN, YELLOW
+from const import WIDTH, HEIGHT, WHITE, BLUE, RED, GREEN, YELLOW, BLACK
 from hub import port
 
-# Initialize Pygame
-# pygame.init()
-
-# Screen Dimensions
-#
-# screen = pygame.display.set_mode((WIDTH, HEIGHT))
-# pygame.display.set_caption("LEGO SPIKE Simulator with Color Sensor")
-
-
-
-# Clock for controlling frame rate
-# clock = pygame.time.Clock()
-
-# Robot Class
 class Robot:
     def __init__(self, screen, x, y, port1, port2, port3):
         self.screen = screen
@@ -26,6 +12,7 @@ class Robot:
 
         self.port1 = port1
         self.port2 = port2
+        self.port3 = port3
 
         self.angle = 0  # Angle in degrees
         self.speed = 0  # Forward/backward speed
@@ -59,10 +46,13 @@ class Robot:
     def update(self):
         left_power = port[self.port1]
         right_power = port[self.port2]
-        self.angle += self.compute_angle(left_power, right_power)
+        self.angle = (self.angle + self.compute_angle(left_power, right_power)) % 360
         self.speed = self.compute_speed(left_power, right_power)
         print(f"Angle {self.angle}. Speed {self.speed}")
         self.move()
+        self.sensor_color = self.detect_color()
+        port[self.port3] = self.sensor_color
+
 
 
     def compute_angle(self, left_power: int, right_power: int) -> float:
@@ -87,51 +77,16 @@ class Robot:
         speed = (avg_power / 100) * max_speed  # Mise à l'échelle par rapport à max_speed
         return speed
 
-#
-# # Initialize the robot
-# robot = Robot(screen, WIDTH // 2, HEIGHT // 2, port.A, port.B, port.C)
-#
-# # Create a background with different colors
-# def draw_background(screen):
-#     screen.fill(WHITE)
-#     pygame.draw.rect(screen, GREEN, (100, 100, 200, 200))  # Green square
-#     pygame.draw.rect(screen, YELLOW, (500, 100, 200, 200))  # Yellow square
-#     pygame.draw.rect(screen, RED, (100, 400, 200, 200))  # Red square
-#
-# # Simulation Loop
-# running = True
-# while running:
-#     # Draw background
-#     draw_background(screen)
-#
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             running = False
-#
-#     # Get key presses
-#     keys = pygame.key.get_pressed()
-#     if keys[pygame.K_UP]:
-#         robot.speed = 5  # Move forward
-#     elif keys[pygame.K_DOWN]:
-#         robot.speed = -5  # Move backward
-#     else:
-#         robot.speed = 0  # Stop
-#
-#     if keys[pygame.K_LEFT]:
-#         robot.rotate("left")
-#     if keys[pygame.K_RIGHT]:
-#         robot.rotate("right")
-#
-#     # Update robot
-#     robot.move()
-#     #robot.detect_color()
-#     robot.draw()
-#
-#     # Refresh display
-#     pygame.display.flip()
-#
-#     # Limit frame rate
-#     clock.tick(30)
-#
-# # Quit Pygame
-# pygame.quit()
+    def detect_color(self):
+        # Calculate the sensor position
+        sensor_x = self.x + math.cos(math.radians(self.angle)) * (self.radius + 5)
+        sensor_y = self.y - math.sin(math.radians(self.angle)) * (self.radius + 5)
+
+        # Ensure the sensor is within bounds
+        if 0 <= sensor_x < WIDTH and 0 <= sensor_y < HEIGHT:
+            # Get the color of the pixel at the sensor position
+            sensor_color = self.screen.get_at((int(sensor_x), int(sensor_y)))[:3]
+        else:
+            sensor_color = BLACK  # Default to black if out of bounds
+
+        return sensor_color

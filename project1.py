@@ -1,12 +1,11 @@
-from _hub import light_matrix, port
 import runloop
 
-from spike import PrimeHub, MotorPair
+from spike import PrimeHub, MotorPair, ColorSensor
 
 # Initialisation du _hub, des moteurs et du capteur de couleur
 hub = PrimeHub()
 motors = MotorPair("A", "B")# Connectez les moteurs sur les ports A et B
-#color_sensor = ColorSensor(port.C) # Connectez le capteur de couleur sur le port C
+color_sensor = ColorSensor("C") # Connectez le capteur de couleur sur le port C
 
 
 
