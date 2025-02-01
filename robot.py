@@ -1,11 +1,11 @@
 import pygame
 import math
 
-from const import WIDTH, HEIGHT, WHITE, BLUE, RED, GREEN, YELLOW, BLACK
+from const import WIDTH, HEIGHT, WHITE, BLUE, RED, GREEN, YELLOW, BLACK, GREY
 from hub import port
 
 class Robot:
-    def __init__(self, screen, x, y, port1, port2, port3):
+    def __init__(self, screen, x, y, angle, port1, port2, port3):
         self.screen = screen
         self.x = x
         self.y = y
@@ -14,15 +14,15 @@ class Robot:
         self.port2 = port2
         self.port3 = port3
 
-        self.angle = 0  # Angle in degrees
+        self.angle = angle  # Angle in degrees
         self.speed = 0  # Forward/backward speed
 
-        self.radius = 20  # Size of the robot
+        self.radius = 15  # Size of the robot
         self.sensor_color = WHITE  # Default sensor color
 
     def draw(self):
         # Draw the robot as a circle
-        pygame.draw.circle(self.screen, BLUE, (int(self.x), int(self.y)), self.radius)
+        pygame.draw.circle(self.screen, GREY, (int(self.x), int(self.y)), self.radius)
         # Draw a line indicating the direction
         direction_x = self.x + math.cos(math.radians(self.angle)) * self.radius
         direction_y = self.y - math.sin(math.radians(self.angle)) * self.radius
@@ -48,7 +48,7 @@ class Robot:
         right_power = port[self.port2]
         self.angle = (self.angle + self.compute_angle(left_power, right_power)) % 360
         self.speed = self.compute_speed(left_power, right_power)
-        print(f"Angle {self.angle}. Speed {self.speed}")
+        # print(f"Angle {self.angle}. Speed {self.speed}")
         self.move()
         self.sensor_color = self.detect_color()
         port[self.port3] = self.sensor_color
@@ -79,8 +79,8 @@ class Robot:
 
     def detect_color(self):
         # Calculate the sensor position
-        sensor_x = self.x + math.cos(math.radians(self.angle)) * (self.radius + 5)
-        sensor_y = self.y - math.sin(math.radians(self.angle)) * (self.radius + 5)
+        sensor_x = self.x + math.cos(math.radians(self.angle)) * (self.radius + 1)
+        sensor_y = self.y - math.sin(math.radians(self.angle)) * (self.radius + 1)
 
         # Ensure the sensor is within bounds
         if 0 <= sensor_x < WIDTH and 0 <= sensor_y < HEIGHT:

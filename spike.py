@@ -10,13 +10,14 @@ class ColorSensor:
     def __init__(self, port1):
         self.port1 = port1
         self.simulated_light = 50  # Valeur par défaut
+        self.color = None  # Valeur par défaut
 
 
-    def get_reflected_light(self):
-        self.simulated_light = port[self.port1]  # Simulation de variation
-        print(f"Capteur de couleur (port {self.port1}) - Luminosité détectée: {self.simulated_light}")
+    def get_color(self):
+        self.color = port[self.port1]  # Simulation de variation
+        print(f"Capteur de couleur (port {self.port1}) - Luminosité détectée: {self.color}")
 
-        return self.simulated_light
+        return self.color
 
 
 class MotorPair:
@@ -31,10 +32,10 @@ class MotorPair:
         print(f"Vitesse par défaut réglée sur {speed}%.")
 
     def start_tank(self, left_power, right_power):
-        print(f"Moteur gauche: {left_power}%, Moteur droit: {right_power}%.")
-        #time.sleep(0.5)  # Simulation du temps de réponse
+        # time.sleep(0.5)  # Simulation du temps de réponse
         port[self.port1] = left_power
         port[self.port2] = right_power
+        # print(f"Moteur gauche: {left_power}%, Moteur droit: {right_power}%.")
 
     def stop(self):
         port[self.port1] = 0

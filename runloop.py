@@ -1,8 +1,10 @@
+import sys
+
 import pygame
 
 import asyncio
 
-from const import WHITE, GREEN, YELLOW, RED, WIDTH, HEIGHT, BLACK, BLUE, BASE_SIZE
+from const import WHITE, GREEN, YELLOW, RED, WIDTH, HEIGHT, BLACK, BLUE, BASE_SIZE, TIME
 from hub import port
 from robot import Robot
 
@@ -13,24 +15,16 @@ pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 font = pygame.font.Font(None, 14)
 
-robot = Robot(screen, 100, 100, "A", "B", "C")
+robot = Robot(screen, 250, 50, -90, "A", "B", "C")
 
 port[robot] = robot
 port[screen] = screen
 
 
-# # Create a background with different colors
-# def draw_background(_screen):
-#     _screen.fill(WHITE)
-#     pygame.draw.rect(_screen, GREEN, (100, 100, 200, 200))  # Green square
-#     pygame.draw.rect(_screen, YELLOW, (500, 100, 200, 200))  # Yellow square
-#     pygame.draw.rect(_screen, RED, (100, 400, 200, 200))  # Red square
-
-
 # Structure du labyrinthe (1 = point bleu, 2 = entrée/sortie rouge, 3 = cible jaune)
 # Définition des nœuds (étiquette, x, y, largeur, hauteur, couleur)
 nodes = {
-    "A": (250, 100, BASE_SIZE, BASE_SIZE, RED),
+    "A": (250, 50, BASE_SIZE, BASE_SIZE, RED),
     "E": (150, 200, BASE_SIZE, BASE_SIZE, BLUE),
     "F": (250, 200, BASE_SIZE, BASE_SIZE, BLUE),
     "G": (350, 200, BASE_SIZE, BASE_SIZE, BLUE),
@@ -65,17 +59,9 @@ def draw_maze():
         text_surface = font.render(label, True, BLACK)
         screen.blit(text_surface, (x + 10, y - 10))  # Décalage pour meilleure visibilité
 
-
-def run(coroutine):
+async def display():
 
     print("Running...")
-
-
-    # Démarre la boucle asyncio dans une tâche
-    loop = asyncio.get_event_loop()
-    asyncio_task = loop.create_task(coroutine)
-    # ###
-
     running = True
     clock = pygame.time.Clock()
 
@@ -90,20 +76,27 @@ def run(coroutine):
             if event.type == pygame.QUIT:  # Ferme la fenêtre
                 running = False
 
-        try:
-            loop.run_until_complete(asyncio_task)
-            # if callable(coroutine):  # Vérifie si c'est bien une fonction
-            #     coroutine()
-            # else:
-            #     raise TypeError("Le paramètre callback doit être une fonction.")
-        except asyncio.exceptions.InvalidStateError:
-            pass  # Ignore si la tâche n'est pas terminée
-
         robot.update()
         robot.draw()
         pygame.display.flip()
-        # Limite la fréquence de rafraîchissement
         clock.tick(60)
-
+        await asyncio.sleep(TIME)
 
     pygame.quit()
+    sys.exit() # brutal close
+
+
+async def pouet(coroutine):
+
+    print("Running...")
+
+    # # Démarre la boucle asyncio dans une tâche
+    loop = asyncio.get_event_loop()
+    task1 = loop.create_task(display())
+    task2 = loop.create_task(coroutine)
+    await asyncio.gather(task1, task2)
+    # loop.run_until_complete(task2)
+    # # ###
+
+def run(coroutine):
+    asyncio.run(pouet(coroutine))

@@ -14,9 +14,3 @@ pip install
 ```
 python app.py
 ```
-
-## En mode pseudo lego code
-
-```
-python projet1.py
-```
