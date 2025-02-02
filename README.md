@@ -18,4 +18,4 @@ python app.py
 
 First results :-/
 
-[![Screencast 0](demo/screencast0.mov)](demo/screencast0.mov)
+[![Screencast 0](demo/screencast0.webm)](demo/screencast0.webm)
