@@ -85,6 +85,9 @@ async def display():
     pygame.quit()
     sys.exit() # brutal close
 
+async def sleep_ms(delay):
+    await asyncio.sleep(delay)
+
 
 async def pouet(coroutine):
 
@@ -95,7 +98,6 @@ async def pouet(coroutine):
     task1 = loop.create_task(display())
     task2 = loop.create_task(coroutine)
     await asyncio.gather(task1, task2)
-    # loop.run_until_complete(task2)
     # # ###
 
 def run(coroutine):

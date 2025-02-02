@@ -1,23 +1,43 @@
-import random
-import time
-import math
 
-from const import WIDTH, HEIGHT, BLACK
+import color
+from const import WIDTH, HEIGHT, BLACK, WHITE, BLUE, RED, YELLOW
 from hub import port
 
 
 class ColorSensor:
     def __init__(self, port1):
         self.port1 = port1
-        self.simulated_light = 50  # Valeur par défaut
-        self.color = None  # Valeur par défaut
-
 
     def get_color(self):
-        self.color = port[self.port1]  # Simulation de variation
-        print(f"Capteur de couleur (port {self.port1}) - Luminosité détectée: {self.color}")
+        c = port[self.port1]
+        if c == BLACK:
+            return color.BLACK
+        elif c == WHITE:
+            return color.WHITE
+        elif c == BLUE:
+            return color.BLUE
+        elif c == YELLOW:
+            return color.YELLOW
+        elif c == RED:
+            return color.RED
 
-        return self.color
+        return color.UNKNOWN
+
+    def get_reflected_light(self):
+        c = port[self.port1]
+
+        if c == BLACK:
+            return 50
+        elif c == WHITE:
+            return 100
+        elif c == BLUE:
+            return 75 # ??
+        elif c == YELLOW:
+            return 90
+        elif c == RED:
+            return 75 # ??
+
+        return 50
 
 
 class MotorPair:
